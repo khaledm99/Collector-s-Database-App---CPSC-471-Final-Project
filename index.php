@@ -24,7 +24,7 @@
 ?>
 
 
-<h1> Welcome! </h1>
+<h1> this branch is ready to merge! </h1>
 <form action="index.php" method="post">
     <label for="uname">Enter Username</label>
     <input type="text" id="uname" name="username"></br>
