@@ -28,7 +28,7 @@
 <form action="index.php" method="post">
     <label for="uname">Enter Username</label>
     <input type="text" id="uname" name="username"></br>
-    <label for "email">Enter E-mail</label>
+    <label for ="email">Enter E-mail</label>
     <input type="text" id="email" name="email"></br>
     <input type = "submit" name = "Submit">
 </form>
