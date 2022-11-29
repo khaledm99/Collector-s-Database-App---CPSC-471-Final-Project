@@ -1,5 +1,5 @@
 <?php
-    $connection = mysqli_connect("localhost","root","password","main");
+    $connection = mysqli_connect("localhost","root","","main");
     if(!$connection) {
         exit("there was an error".mysqli_connect_errno());
     } else {
