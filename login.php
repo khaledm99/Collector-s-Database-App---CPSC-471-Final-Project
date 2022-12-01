@@ -1,4 +1,5 @@
 <?php
+    session_start();
     $connection = mysqli_connect("localhost","root","password","main");
     if(!$connection) {
         exit("there was an error".mysqli_connect_errno());
@@ -17,7 +18,8 @@
         } else {
             if (mysqli_num_rows($result) == 1){
                 echo "logged in";
-                header("Location: dashboard.php?username={$username}");
+                $_SESSION['username'] = $username;
+                header("Location: dashboard.php");
             } else {
                 echo "error logging in";
             }
@@ -33,3 +35,7 @@
 
     <input type = "submit" name = "Submit">
 </form>
+
+<form action="index.php">
+    <input type="submit" value="Register" />
+</form> 
