@@ -7,28 +7,29 @@
     if (isset($_POST['Submit'])) {
         
         $username = htmlentities($_POST['username']);
-        $email = htmlentities($_POST['email']);
+        // $email = htmlentities($_POST['email']);
         // $curdate = mysqli_query($connection, "SELECT curdate()");
         
-        $query = "INSERT INTO CLIENT (Username, Date_Joined, Email) VALUES ('$username', curdate(), '$email')";
+        $query = "SELECT Username FROM CLIENT WHERE CLIENT.Username = '$username'";
         $result = mysqli_query($connection, $query);
         if (!$result) {
-            echo("username already exists, please try again");
+            echo("error");
         } else {
-            echo "data inserted";
+            if (mysqli_num_rows($result) == 1){
+                echo "logged in";
+                header("Location: dashboard.php?username={$username}");
+            } else {
+                echo "error logging in";
+            }
         }
     }
 ?>
 
 
-<h1> Welcome, enter a Username and Email to register! </h1>
-<form action="index.php" method="post">
+<h1> Please login </h1>
+<form action="login.php" method="post">
     <label for="uname">Enter Username</label>
     <input type="text" id="uname" name="username"></br>
-    <label for ="email">Enter E-mail</label>
-    <input type="text" id="email" name="email"></br>
+
     <input type = "submit" name = "Submit">
 </form>
-<form action="login.php">
-    <input type="submit" value="Login" />
-</form> 
