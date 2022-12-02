@@ -1,7 +1,8 @@
 <?php
 
-session_start();
-$connection = mysqli_connect("localhost","root","","main");
+session_start(); //Start Session
+
+$connection = mysqli_connect("localhost","root","","main"); //Connecting to server
 if(!$connection) {
     exit("there was an error".mysqli_connect_errno());
 }
@@ -35,6 +36,13 @@ WHERE STORAGE_DEVICE.Item_ID = IN_COLLECTION.Item_ID AND
 IN_COLLECTION.Collection_name = @sub_col_name
 ";
 
+$filter = "default";
+if (isset($_POST['Submit'])) {
+        
+  $filter = htmlentities($_POST['filter']);
+  
+}
+
 
 
 ?>
@@ -50,18 +58,18 @@ IN_COLLECTION.Collection_name = @sub_col_name
 
 <p>Please choose a filter for your collection from the dropdown menu below.</p>
 
-<form action="filters.php">
-  <label for="filters">Choose a filter:</label>
+<form action="filters.php" method = "post">
+  <label for="filter">Choose a filter:</label>
   <select name="filter" id="filter">
-    <option disabled selected value> -- select an option -- </option>
-    <option value="titles">Titles</option>
-    <option value="consoles">Consoles</option>
-    <option value="subscriptions">Subscriptions</option>
-    <option value="accessories">Accessories</option>
-    <option value="company">Company</option>
+    <option <?=$filter=="default"?'selected="selected"':'';?> value="default" > -- no filter -- </option>
+    <option <?=$filter=="titles"?'selected="selected"':'';?>value="titles">Titles</option>
+    <option <?=$filter=="consoles"?'selected="selected"':'';?>value="consoles">Consoles</option>
+    <option <?=$filter=="subscriptions"?'selected="selected"':'';?>value="subscriptions">Subscriptions</option>
+    <option <?=$filter=="accessories"?'selected="selected"':'';?>value="accessories">Accessories</option>
+    <option <?=$filter=="company"?'selected="selected"':'';?>value="company">Company</option>
   </select>
   <br><br>
-  <input type="submit" value="Submit">
+  <input type="submit" value="Submit" name = "Submit">
 </form>
 
 <p>Click the "Submit" button and the form-data will be sent to a page on the 
