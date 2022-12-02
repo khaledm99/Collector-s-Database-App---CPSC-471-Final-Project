@@ -4,9 +4,19 @@ session_start();
 $connection = mysqli_connect("localhost","root","","main");
 if(!$connection) {
     exit("there was an error".mysqli_connect_errno());
-} 
+}
+
+//USERNAME
+$username = htmlentities($_POST['username']);
+
+//TITLE FILTER POSSIBLY
+$query = "SELECT TITLE.* FROM TITLE, IN_COLLECTION WHERE TITLE.Item_ID = IN_COLLECTION.Item_ID AND  IN_COLLECTION.Collection_name";
+
+
+
 ?>
 
+<!--HTML LOOK STUFF-->
 <!DOCTYPE html>
 <html>
 <body>
