@@ -6,7 +6,7 @@
     } 
 
     echo "Welcome, " . $_SESSION['username'] ;
-    if (isset($_POST['Submit'])) {
+    if (isset($_POST['Logout'])) {
         session_unset();
         session_destroy();
         header("Location: login.php?=loggedout");
@@ -15,6 +15,5 @@
 
 
 <form action="dashboard.php" method="post">
-    
-    <input type = "submit" name = "Submit" value = "Logout">
+    <input type = "submit" name = "Logout" value = "Logout">
 </form>
