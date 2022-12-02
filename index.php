@@ -16,7 +16,42 @@
             echo("username already exists, please try again");
         } else {
             echo "data inserted";
+            $query = "INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) VALUES ('$username''s collection', '$username', 1)";
+            $result = mysqli_query($connection, $query);
+            if (!$result) {
+                echo("sup_coll_err");
+            } else {
+                echo "sup_col inserted";
+            }
+
+            $query = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES ('$username''s first collection', '$username''s collection')";
+            $result = mysqli_query($connection, $query);
+            if (!$result) {
+                echo("sub_coll_err");
+            } else {
+                echo "sub_col inserted";
+            }
+
+            $query = "INSERT INTO WISHLIST (Owner_username) VALUES ('$username')";
+            $result = mysqli_query($connection, $query);
+            if (!$result) {
+                echo("wishlist_err");
+            } else {
+                echo "wishlist inserted";
+            }
+
+            $query = "INSERT INTO REPORT (Sub_collection_name, Super_collection_name) VALUES ('$username''s first collection', '$username''s collection')";
+            $result = mysqli_query($connection, $query);
+            if (!$result) {
+                echo("report_err");
+            } else {
+                echo "report inserted";
+            }
         }
+
+        
+
+       
     }
 ?>
 
