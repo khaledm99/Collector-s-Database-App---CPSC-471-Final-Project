@@ -11,19 +11,23 @@
         // $email = htmlentities($_POST['email']);
         // $curdate = mysqli_query($connection, "SELECT curdate()");
         
-        $query = "SELECT Username FROM CLIENT WHERE CLIENT.Username = '$username'";
-        $result = mysqli_query($connection, $query);
-        if (!$result) {
-            echo("error");
-        } else {
-            if (mysqli_num_rows($result) == 1){
-                echo "logged in";
-                $_SESSION['username'] = $username;
-                header("Location: dashboard.php");
-            } else {
-                echo "error logging in";
-            }
+        $query = "SELECT Username FROM CLIENT WHERE CLIENT.Username = ?";
+        if($prepared_query = mysqli_prepare($connection, $query)){
+            mysqli_stmt_bind_param($prepared_query, 's', $username);
+            mysqli_stmt_execute($prepared_query);
+            mysqli_stmt_store_result($prepared_query);
+            
+            $result = mysqli_stmt_affected_rows($prepared_query);
         }
+        
+        if ($result == 1){
+            echo "logged in";
+            $_SESSION['username'] = $username;
+            header("Location: dashboard.php");
+        } else {
+            echo "error logging in";
+        }
+        
     }
 ?>
 
