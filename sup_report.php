@@ -1,3 +1,40 @@
+<html>
+<style type = "text/css">
+    body {
+        background-color: #37FF8B;
+        /* background-image: url(bg3.png); */
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin: 100px;
+        color: #457B9D; 
+
+    }
+    h1 {
+        text-align: center;
+        font-family: tahoma;
+        margin: 50px;
+    }
+    form {
+        text-align: center;
+        font-family: tahoma;
+    }
+    div {
+        text-align: center;
+        font-family: tahoma;
+    }
+    input[type=text] {
+        border: none;
+    }
+    input[type=button], input[type=submit] {
+        border: none;
+        border-radius: 2px;
+        font-size: 18px;
+        padding: 10px;
+    } 
+    input[type=submit]:hover {
+        color: #E63946;
+    }
+</style>
 <?php
     session_start();
     $connection = mysqli_connect("localhost","root","password","main");
@@ -23,8 +60,7 @@
         mysqli_stmt_bind_param($prepared_query, 'ssssss', $username, $username, $username, $username, $username, $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
-            echo("Number of items owned: $result->num_rows");
-            // echo("'$result' Items owned");
+            echo("<div>Number of items owned: $result->num_rows</div>");
         } else {
             echo("Error executing SQL");
         }
@@ -40,7 +76,7 @@
         mysqli_stmt_bind_param($prepared_query, 'ssssss', $username, $username, $username, $username, $username, $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
-            echo("Number of items in wishlist: $result->num_rows");
+            echo("<div>Number of items in wishlist: $result->num_rows</div>");
             // echo("'$result' Items owned");
         } else {
             echo("Error executing SQL");
@@ -53,7 +89,7 @@
         mysqli_stmt_bind_param($prepared_query, 's', $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
-            echo("Number of sub-collections: $result->num_rows");
+            echo("<div>Number of sub-collections: $result->num_rows</div>");
             // echo("'$result' Items owned");
         } else {
             echo("Error executing SQL");
@@ -70,10 +106,11 @@
 
 
 
-
+</br>
 <form action="dashboard.php">
     <input type = "submit" name = "Dashboard" value = "Return to Dashboard">
 </form>
 <form action="dashboard.php" method="post">
     <input type = "submit" name = "Logout" value = "Logout">
 </form>
+</body>
