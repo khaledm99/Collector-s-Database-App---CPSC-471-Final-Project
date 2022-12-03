@@ -1,9 +1,12 @@
 <html>
 <style type = "text/css">
     body {
-        background-color: lightgreen;
+        background-color: #37FF8B;
+        /* background-image: url(bg3.png); */
+        background-repeat: no-repeat;
+        background-size: cover;
         margin: 100px;
-        color: darkgreen; 
+        color: #457B9D; 
 
     }
     h1 {
@@ -29,7 +32,7 @@
         padding: 10px;
     } 
     input[type=submit]:hover {
-        color: white;
+        color: #E63946;
     }
 
 </style>
