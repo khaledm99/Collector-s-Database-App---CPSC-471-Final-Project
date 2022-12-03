@@ -1,3 +1,38 @@
+<html>
+<style type = "text/css">
+    body {
+        background-color: lightgreen;
+        margin: 100px;
+        color: darkgreen; 
+
+    }
+    h1 {
+        text-align: center;
+        font-family: tahoma;
+        margin: 50px;
+    }
+    form {
+        text-align: center;
+        font-family: tahoma;
+    }
+    div {
+        text-align: center;
+        font-family: tahoma;
+    }
+    input[type=text] {
+        border: none;
+    }
+    input[type=button], input[type=submit] {
+        border: none;
+        border-radius: 2px;
+        font-size: 18px;
+        padding: 10px;
+    } 
+    input[type=submit]:hover {
+        color: white;
+    }
+
+</style>
 <?php
     $connection = mysqli_connect("localhost","root","password","main");
     if(!$connection) {
@@ -5,9 +40,9 @@
     } 
 ?>
     
-
-
 <h1> Welcome, enter a Username and Email to register! </h1>
+<body>
+
 <form action="index.php" method="post">
     <label for="uname">Enter Username</label>
     <input type="text" id="uname" name="username"></br>
@@ -22,11 +57,11 @@ if (isset($_POST['Submit'])) {
         $email = htmlentities($_POST['email']);
         $input_err = FALSE;
         if(empty(trim($username))) {
-            echo("Please enter a username </br>");
+            echo("<div>Please enter a username </div></br>");
             $input_err = TRUE;
         }
         if(empty(trim($email))) {
-            echo("Please enter an email </br>");
+            echo("<div>Please enter an email </div></br>");
             $input_err = TRUE;
         }
 
@@ -42,7 +77,7 @@ if (isset($_POST['Submit'])) {
             // $result = mysqli_query($connection, $query);
             $insertion_err = FALSE;
             if ($result != 1) {
-                echo("username already exists, please try again");
+                echo("<div>username already exists, please try again</div>");
             } else {
                 $query = "INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) VALUES (?'s collection', ?, 1)";
 
@@ -101,7 +136,7 @@ if (isset($_POST['Submit'])) {
                 
             }
             if(!$insertion_err){
-                echo(("Successfully registered '$username'!</br>"));
+                echo(("<div>Successfully registered '$username'!</div></br>"));
             }
         }
 
@@ -111,7 +146,9 @@ if (isset($_POST['Submit'])) {
        
     }
 ?>
-</br></br>
+</br>
 <form action="login.php">
     <input type="submit" value="Login" />
 </form> 
+</body>
+</html>

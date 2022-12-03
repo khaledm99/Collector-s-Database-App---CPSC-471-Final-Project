@@ -1,3 +1,38 @@
+<style type = "text/css">
+    body {
+        background-color: lightgreen;
+        margin: 100px;
+        color: darkgreen; 
+
+    }
+    h1 {
+        text-align: center;
+        font-family: tahoma;
+        margin: 50px;
+    }
+    form {
+        text-align: center;
+        font-family: tahoma;
+    }
+    div {
+        text-align: center;
+        font-family: tahoma;
+    }
+    input[type=text] {
+        border: none;
+    }
+    input[type=button], input[type=submit] {
+        border: none;
+        border-radius: 2px;
+        font-size: 18px;
+        padding: 10px;
+    } 
+    input[type=submit]:hover {
+        color: white;
+    }
+
+</style>
+<body>
 <?php
     session_start();
     $connection = mysqli_connect("localhost","root","password","main");
@@ -22,10 +57,13 @@
         mysqli_stmt_bind_param($prepared_query, 'ssssss', $username, $username, $username, $username, $username, $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
+            echo('<div>');
             while ($o = mysqli_fetch_object($result)) {
                 printf("%s ", $o->Name);
                 echo ('</br>');
             }
+            echo('</div>');
+
         } else {
             echo("Error executing SQL");
         }
@@ -41,3 +79,4 @@
 <form action="wishlist.php" method="post">
     <input type = "submit" name = "Logout" value = "Logout">
 </form>
+</body>
