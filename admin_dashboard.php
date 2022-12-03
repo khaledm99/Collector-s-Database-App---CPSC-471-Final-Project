@@ -41,6 +41,9 @@
     <input type = "submit" name = "gen_report" value = "Generate System Report">
 </form>
 
+<form action="view_sys_reports.php">
+    <input type = "submit" name = "view_reports" value = "View System Reports">
+</form>
 
 <form action="admin_dashboard.php" method="post">
     <input type = "submit" name = "Logout" value = "Logout">
