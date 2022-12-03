@@ -69,6 +69,21 @@
             header("Location: dashboard.php");
         } else {
             echo "<div>error logging in</div></br>";
+            $query = "SELECT Username FROM ADMIN WHERE ADMIN.Username = ?";
+            if($prepared_query = mysqli_prepare($connection, $query)){
+                mysqli_stmt_bind_param($prepared_query, 's', $username);
+                mysqli_stmt_execute($prepared_query);
+                mysqli_stmt_store_result($prepared_query);
+                
+                $result = mysqli_stmt_affected_rows($prepared_query);
+            }
+            if ($result == 1){
+                echo "logged in";
+                $_SESSION['username'] = $username;
+                header("Location: admin_dashboard.php");
+            } else {
+                echo("Error Logging In");
+            }
         }
         
     }
