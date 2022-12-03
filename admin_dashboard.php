@@ -45,6 +45,10 @@
     <input type = "submit" name = "view_reports" value = "View System Reports">
 </form>
 
+<form action="view_users.php">
+    <input type = "submit" name = "view_users" value = "View User List">
+</form>
+
 <form action="admin_dashboard.php" method="post">
     <input type = "submit" name = "Logout" value = "Logout">
 </form>
