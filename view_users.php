@@ -1,3 +1,41 @@
+<html>
+<style type = "text/css">
+    body {
+        background-color: #37FF8B;
+        /* background-image: url(bg3.png); */
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin: 100px;
+        color: #457B9D; 
+
+    }
+    h1 {
+        text-align: center;
+        font-family: tahoma;
+        margin: 50px;
+    }
+    form {
+        text-align: center;
+        font-family: tahoma;
+    }
+    div {
+        text-align: center;
+        font-family: tahoma;
+    }
+    input[type=text] {
+        border: none;
+    }
+    input[type=button], input[type=submit] {
+        border: none;
+        border-radius: 2px;
+        font-size: 18px;
+        padding: 10px;
+    } 
+    input[type=submit]:hover {
+        color: #E63946;
+    }
+</style>
+<body>
 <?php
     session_start();
     $connection = mysqli_connect("localhost","root","password","main");
@@ -17,12 +55,14 @@
         mysqli_stmt_bind_param($prepared_query, 's', $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
+            echo("<div>");
             while ($o = mysqli_fetch_object($result)) {
-                $fstring = sprintf("User: %-10s | Joined: %-12s | E-mail: %-12s", $o->Username, $o->Date_Joined, $o->Email);
+                $fstring = sprintf("User: %-24s | Joined: %-16s | E-mail: %-24s", $o->Username, $o->Date_Joined, $o->Email);
                 echo ("<pre> $fstring </pre>");
             }
+            echo("</div>");
         } else {
-            echo("Error executing SQL");
+            echo("<div>Error executing SQL</div>");
         }
     }
     
@@ -36,3 +76,4 @@
 <form action="view_users.php" method="post">
     <input type = "submit" name = "Logout" value = "Logout">
 </form>
+</body>
