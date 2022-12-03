@@ -1,3 +1,4 @@
+<?php     session_start(); ?>
 <style type = "text/css">
     body {
         background-color: #37FF8B;
@@ -34,7 +35,6 @@
 </style>
 <body>
 <?php
-    session_start();
     $connection = mysqli_connect("localhost","root","password","main");
     if(!$connection) {
         exit("there was an error".mysqli_connect_errno());
