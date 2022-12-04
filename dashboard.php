@@ -1,4 +1,16 @@
-<?php     session_start(); ?>
+<?php     
+    session_start(); 
+    $connection = mysqli_connect("localhost","root","password","main");
+    if(!$connection) {
+        exit("there was an error".mysqli_connect_errno());
+    } 
+
+    if (isset($_POST['Logout'])) {
+        session_unset();
+        session_destroy();
+        header("Location: login.php?=loggedout");
+    }
+?>
 <style type = "text/css">
     body {
         background-color: #37FF8B;
@@ -35,17 +47,7 @@
 </style>
 <body>
 <?php
-    $connection = mysqli_connect("localhost","root","password","main");
-    if(!$connection) {
-        exit("there was an error".mysqli_connect_errno());
-    } 
-
     echo "<h1>Welcome, " . $_SESSION['username'] ."</h1>";
-    if (isset($_POST['Logout'])) {
-        session_unset();
-        session_destroy();
-        header("Location: login.php?=loggedout");
-    }
 ?>
 
 <form action="wishlist.php">

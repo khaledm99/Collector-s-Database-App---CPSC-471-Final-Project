@@ -1,3 +1,42 @@
+<?php  
+    session_start();
+    $connection = mysqli_connect("localhost","root","password","main");
+    if(!$connection) {
+        exit("there was an error".mysqli_connect_errno());
+    } 
+    
+    
+    if (isset($_POST['Logout'])) {
+        session_unset();
+        session_destroy();
+        header("Location: login.php?=loggedout");
+    }
+    $username = $_SESSION['username'] ;
+    if (isset($_POST['gen_report'])) {
+       
+        $time = date("Y-m-d H:i:s");
+        $query = "INSERT INTO SYSTEM_REPORT (Timestamp) VALUES (?)";
+        if($prepared_query = mysqli_prepare($connection, $query)){
+            mysqli_stmt_bind_param($prepared_query, 's', $time);
+            mysqli_stmt_execute($prepared_query);
+            mysqli_stmt_store_result($prepared_query);
+            
+            $result = mysqli_stmt_affected_rows($prepared_query);
+        }
+        $query = "INSERT INTO GENERATES_SYS_REPORT (Admin_username, Report_timestamp, Super_collection_name) VALUES (?, ?, 'khaledm99''s collection')";
+        
+        if($prepared_query = mysqli_prepare($connection, $query)){
+            mysqli_stmt_bind_param($prepared_query, 'ss', $username, $time);
+            mysqli_stmt_execute($prepared_query);
+            mysqli_stmt_store_result($prepared_query);
+            
+            $result = mysqli_stmt_affected_rows($prepared_query);
+        }
+        echo("<div></br> System Report Generated at $time!</div>");
+        
+    }
+
+?>
 <html>
 <style type = "text/css">
     body {
@@ -36,44 +75,7 @@
     }
 </style>
 <body>
-<?php
-    session_start();
-    $connection = mysqli_connect("localhost","root","password","main");
-    if(!$connection) {
-        exit("there was an error".mysqli_connect_errno());
-    } 
-    $username = $_SESSION['username'] ;
-    echo "<h1>Welcome, administrator $username</h1>"  ;
-    
-    if (isset($_POST['Logout'])) {
-        session_unset();
-        session_destroy();
-        header("Location: login.php?=loggedout");
-    }
-    if (isset($_POST['gen_report'])) {
-       
-        $time = date("Y-m-d H:i:s");
-        $query = "INSERT INTO SYSTEM_REPORT (Timestamp) VALUES (?)";
-        if($prepared_query = mysqli_prepare($connection, $query)){
-            mysqli_stmt_bind_param($prepared_query, 's', $time);
-            mysqli_stmt_execute($prepared_query);
-            mysqli_stmt_store_result($prepared_query);
-            
-            $result = mysqli_stmt_affected_rows($prepared_query);
-        }
-        $query = "INSERT INTO GENERATES_SYS_REPORT (Admin_username, Report_timestamp, Super_collection_name) VALUES (?, ?, 'khaledm99''s collection')";
-        
-        if($prepared_query = mysqli_prepare($connection, $query)){
-            mysqli_stmt_bind_param($prepared_query, 'ss', $username, $time);
-            mysqli_stmt_execute($prepared_query);
-            mysqli_stmt_store_result($prepared_query);
-            
-            $result = mysqli_stmt_affected_rows($prepared_query);
-        }
-        echo("<div></br> System Report Generated at $time!</div>");
-        
-    }
-?>
+<h1>Welcome, administrator <?php echo $username; ?></h1>
 
 <form action="admin_dashboard.php" method="post">
     <input type = "submit" name = "gen_report" value = "Generate System Report">
