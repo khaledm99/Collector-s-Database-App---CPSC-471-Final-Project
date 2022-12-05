@@ -56,6 +56,9 @@
 <form action="sup_report.php">
     <input type = "submit" name = "sup_report" value = "View Super-Collection Report">
 </form>
+<form action="collections.php">
+    <input type = "submit" name = "collections" value = "View Collections">
+</form>
 <form action="dashboard.php" method="post">
     <input type = "submit" name = "Logout" value = "Logout">
 </form>
