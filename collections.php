@@ -162,7 +162,9 @@ if ( $result > 0 ) {
     <input type="text" id="add" name="collection">
     <input type="submit" value="Add" name="Add"></br>
 </form>
-
+<form action="dashboard.php">
+    <input type = "submit" name = "Dashboard" value = "Return to Dashboard">
+</form>
 </body>
 
 </html>
