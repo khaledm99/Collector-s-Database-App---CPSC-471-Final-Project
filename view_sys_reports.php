@@ -3,8 +3,8 @@
 <html>
 <style type = "text/css">
     body {
-        background-color: #37FF8B;
-        /* background-image: url(bg3.png); */
+        /* background-color: #37FF8B; */
+        background-image: url(bg3.png);
         background-repeat: no-repeat;
         background-size: cover;
         margin: 100px;
