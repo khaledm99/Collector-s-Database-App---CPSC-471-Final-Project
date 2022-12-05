@@ -1,7 +1,10 @@
 <?php     session_start(); ?>   
 <style type = "text/css">
     body {
-        background-color: #37FF8B;
+        /* background-color: #37FF8B; */
+        background-image: url(bg3.png);
+        background-repeat: no-repeat;
+        background-size: cover;
         margin: 100px;
         color: #457B9D; 
 

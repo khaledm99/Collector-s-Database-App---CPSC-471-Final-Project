@@ -1,7 +1,10 @@
 <?php     session_start(); ?>   
 <style type = "text/css">
     body {
-        background-color: #37FF8B;
+        /* background-color: #37FF8B; */
+        background-image: url(bg3.png);
+        background-repeat: no-repeat;
+        background-size: cover;
         margin: 100px;
         color: #457B9D; 
 
@@ -18,6 +21,7 @@
     div {
         text-align: center;
         font-family: tahoma;
+        color: white;
     }
     input[type=text] {
         width: 100%;
@@ -84,15 +88,12 @@
             $date = $_POST['Date_acquired'];
             $madeby = $_POST['Company_made_by'];
             $itemid = (int) $itemid;
-            echo "$madeby";
             $query = "UPDATE CONSOLE  SET  Name = ?, Serial_no = ? , CONSOLE.Condition = ?, Internal_storage_capacity = ?,Type = ? ,
             Edition = ? ,Quantity = ?,Date_acquired = ? , Company_made_by = ? WHERE Item_ID = ?";
 
             // $query = "UPDATE CONSOLE  SET  Name = ? , Serial_no = ? , CONSOLE.Condition = ? , Internal_storage_capacity = ? ,Type = ? ,Edition = ? ,Quantity = ? ,Date_acquired = ? , Company_made_by = ? WHERE Item_ID = ?";
-            $sql = "UPDATE CONSOLE  SET  Name = \'ss\', Serial_no = \'ddf\' , CONSOLE.Condition = \'good\' , Internal_storage_capacity = \'4\' ,Type = \'ps\' ,Edition = \'dayone\' ,Quantity = 2 ,Date_acquired = NULL , Company_made_by = NULL WHERE Item_ID = 3";
 
             if($prepared_query = mysqli_prepare($connection, $query)){
-                echo 'test';
                 // mysqli_stmt_bind_param($prepared_query, 'sssdssissi', $name,$sno,$cond,$storage,$consoletype,$edition,$quantity,$date,$made_by, $itemid);
                 mysqli_stmt_bind_param($prepared_query, 'sssdssissi',$name,$sno,$cond,$storage,$consoletype,$edition,$quantity,$date,$madeby,$itemid);
                 if(mysqli_stmt_execute($prepared_query)){
@@ -104,8 +105,33 @@
                 }
             }
 
+        }
+        if($itemtype == 'title'){
+            echo "test";
+            $name = $_POST['Name'];
+            $status =  $_POST['Play_status'];
+            $year = $_POST['Release_year'];
+            $time = $_POST['Playtime'];
+            $type = $_POST['Game_type'];
+            $edition = $_POST['Edition'];
+            $rating = $_POST['Rating'];
+            $query = "UPDATE TITLE  SET  Name = ?, Play_status = ? , Release_year = ?, Playtime = ?,Game_type = ? ,
+            Edition = ? ,Rating = ? WHERE Item_ID = ?";
+            
+            // $query = "UPDATE CONSOLE  SET  Name = ? , Serial_no = ? , CONSOLE.Condition = ? , Internal_storage_capacity = ? ,Type = ? ,Edition = ? ,Quantity = ? ,Date_acquired = ? , Company_made_by = ? WHERE Item_ID = ?";
+            $sql = "UPDATE CONSOLE  SET  Name = \'ss\', Serial_no = \'ddf\' , CONSOLE.Condition = \'good\' , Internal_storage_capacity = \'4\' ,Type = \'ps\' ,Edition = \'dayone\' ,Quantity = 2 ,Date_acquired = NULL , Company_made_by = NULL WHERE Item_ID = 3";
 
-
+            if($prepared_query = mysqli_prepare($connection, $query)){
+                // mysqli_stmt_bind_param($prepared_query, 'sssdssissi', $name,$sno,$cond,$storage,$consoletype,$edition,$quantity,$date,$made_by, $itemid);
+                mysqli_stmt_bind_param($prepared_query, 'ssssssss', $name,$status, $year, $time, $type, $edition, $rating, $itemid);
+                if(mysqli_stmt_execute($prepared_query)){
+                    $result = mysqli_stmt_get_result($prepared_query);
+                    echo('<div>Item saved</div>');
+                    
+                } else {
+                    echo("Error executing SQL");
+                }
+            }
         }
     }
 
@@ -192,7 +218,3 @@
     <input type = "submit" name = "Logout" value = "Logout">
 </form>
 </body>
-
-
-
-
