@@ -148,7 +148,7 @@ mysqli_stmt_bind_result($pquery, $item_id, $item_name, $type);
     ?>
         <tr>
             <td><?php echo $item_id; ?> </td>
-            <td><?php echo $item_name; ?> </td>
+            <td><?php echo ("<a href=\"view_item.php?itemid=$item_id&type=$type\">$item_name</a>"); ?> </td>
             <td><?php echo $type; ?> </td>
         </tr>
     <?php 
