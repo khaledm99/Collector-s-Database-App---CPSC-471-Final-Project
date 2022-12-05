@@ -3,8 +3,8 @@
 <html>
 <style type = "text/css">
     body {
-        background-color: #37FF8B;
-        /* background-image: url(bg3.png); */
+        /* background-color: #37FF8B; */
+        background-image: url(bg3.png);
         background-repeat: no-repeat;
         background-size: cover;
         margin: 100px;
@@ -121,9 +121,9 @@ if(isset($_POST['addConsole'])){
     mysqli_stmt_execute($pquery);
 }
 
-$sql = "SELECT in_col.item_id AS ID, t.name AS Name, 'Title' AS Type FROM IN_COLLECTION AS in_col, TITLE AS t WHERE in_col.Collection_name = ? AND in_col.Item_ID = t.Item_ID
+$sql = "SELECT in_col.item_id AS ID, t.name AS Name, 'title' AS Type FROM IN_COLLECTION AS in_col, TITLE AS t WHERE in_col.Collection_name = ? AND in_col.Item_ID = t.Item_ID
         UNION
-        SELECT in_col.item_id AS ID, c.name AS Name, 'Console' as Type FROM IN_COLLECTION AS in_col, CONSOLE AS c WHERE in_col.Collection_name = ? AND in_col.Item_ID = c.Item_ID";
+        SELECT in_col.item_id AS ID, c.name AS Name, 'console' as Type FROM IN_COLLECTION AS in_col, CONSOLE AS c WHERE in_col.Collection_name = ? AND in_col.Item_ID = c.Item_ID";
 
 $pquery = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($pquery, 'ss', $collection, $collection);
@@ -158,8 +158,8 @@ mysqli_stmt_bind_result($pquery, $item_id, $item_name, $type);
 <form action="addItem.php" method="post">
   <label for="type">Add to collection:</label>
   <select id="type" name="type">
-    <option value="Title">Title</option>
-    <option value="Console">Console</option>
+    <option value="title">Title</option>
+    <option value="console">Console</option>
   </select>
   <input type="hidden" id="collectionID" name="collectionID" value="<?php echo $collection; ?>">
   <input type="submit" value="Add Item" name="Add_Item">
