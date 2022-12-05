@@ -71,59 +71,6 @@
         session_destroy();
         header("Location: login.php?=loggedout");
     }
-
-    if(isset($_POST['save'])){
-        if($itemtype == 'console'){
-            $name = $_POST['Name'];
-            $sno =  $_POST['Serial_no'];
-            $cond = $_POST['Condition'];
-            $storage = (float)$_POST['Internal_storage_capacity'];
-            $consoletype = $_POST['Type'];
-            $edition = $_POST['Edition'];
-            $quantity = (int)$_POST['Quantity'];
-            $date = $_POST['Date_acquired'];
-            $madeby = $_POST['Company_made_by'];
-            $itemid = (int) $itemid;
-            echo "$madeby";
-            $query = "UPDATE CONSOLE  SET  Name = ?, Serial_no = ? , CONSOLE.Condition = ?, Internal_storage_capacity = ?,Type = ? ,
-            Edition = ? ,Quantity = ?,Date_acquired = ? , Company_made_by = ? WHERE Item_ID = ?";
-
-            // $query = "UPDATE CONSOLE  SET  Name = ? , Serial_no = ? , CONSOLE.Condition = ? , Internal_storage_capacity = ? ,Type = ? ,Edition = ? ,Quantity = ? ,Date_acquired = ? , Company_made_by = ? WHERE Item_ID = ?";
-            $sql = "UPDATE CONSOLE  SET  Name = \'ss\', Serial_no = \'ddf\' , CONSOLE.Condition = \'good\' , Internal_storage_capacity = \'4\' ,Type = \'ps\' ,Edition = \'dayone\' ,Quantity = 2 ,Date_acquired = NULL , Company_made_by = NULL WHERE Item_ID = 3";
-
-            if($prepared_query = mysqli_prepare($connection, $query)){
-                echo 'test';
-                // mysqli_stmt_bind_param($prepared_query, 'sssdssissi', $name,$sno,$cond,$storage,$consoletype,$edition,$quantity,$date,$made_by, $itemid);
-                mysqli_stmt_bind_param($prepared_query, 'sssdssissi',$name,$sno,$cond,$storage,$consoletype,$edition,$quantity,$date,$madeby,$itemid);
-                if(mysqli_stmt_execute($prepared_query)){
-                    $result = mysqli_stmt_get_result($prepared_query);
-                    echo('<div>Item saved</div>');
-                    
-                } else {
-                    echo("Error executing SQL");
-                }
-            }
-
-
-
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     if (isset($_POST['delete'])){
         $query = "DELETE FROM ITEM where ITEM.Item_ID = ?";
         if($prepared_query = mysqli_prepare($connection, $query)){
@@ -145,12 +92,70 @@
         
         if(mysqli_stmt_execute($prepared_query)){
             
-            
             $result = mysqli_stmt_get_result($prepared_query);
             $query = array();
             while($query[] = mysqli_fetch_assoc($result));
             array_pop($query);
+            
+            // Output a dynamic table of the results with column headings. Code to do so has been adapted from: https://www.antropy.co.uk/blog/handy-php-snippets/
+            echo '<table border="1">';
+            echo '<tr>';
+            foreach($query[0] as $key => $value) {
+                echo '<td>';
+                echo $key;
+                echo '</td>';
+            }
+            echo '</tr>';
+            echo "<form action=\"view_item.php?itemid=$itemid&type=$itemtype\" method=\"post\">";
+            foreach($query as $row) {
+                echo '<tr>';
+                foreach($query[0] as $key => $value) {
+                    echo '<td>';
+                    if( $key == 'Item_ID'){
+                        echo("$value");
+                    } else{
+                        echo("<input type=\"text\" id=\"$key\" name=\"$key\" value=\"$value\">");}
+                    echo '</td>';
+                }
+                echo '</tr>';
+            }
+            
+            echo '</table>';
+            echo("<input type = \"submit\" name = \"save\" value = \"Save Item\">");
+            echo '</form>';
+           
+        } else {
+            echo("Error executing SQL");
+        }
+        }
+    }
+    
+    echo("</br>");
+    // echo("<div style=\"float:left;display:inline-block;\"><form action=\"view_item.php?itemid=$itemid&type=$itemtype\" method=\"post\">
+    //     <input type = \"submit\" name = \"save\" value = \"Save Item\">
+    // </form></div> ");
+    echo("<form action=\"view_item.php?itemid=$itemid&type=$itemtype\" method=\"post\">
+        <input type = \"submit\" name = \"delete\" value = \"Delete Item\">
+    </form> ");
+?>
 
+<form action="dashboard.php">
+    <input type = "submit" name = "Dashboard" value = "Return to Dashboard">
+</form>
+<form action="view_item.php" method="post">
+    <input type = "submit" name = "Logout" value = "Logout">
+</form>
+</body>
+
+
+
+
+<!-- 
+$result = mysqli_stmt_get_result($prepared_query);
+            $query = array();
+            while($query[] = mysqli_fetch_assoc($result));
+            array_pop($query);
+            
             // Output a dynamic table of the results with column headings. Code to do so has been retrieved from: https://www.antropy.co.uk/blog/handy-php-snippets/
             echo '<table border="1">';
             echo '<tr>';
@@ -169,30 +174,4 @@
                 }
                 echo '</tr>';
             }
-            echo '</table>';
-        } else {
-            echo("Error executing SQL");
-        }
-        }
-    }
-    echo("</br>");
-    echo("<div style=\"float:left;display:inline-block;\"><form action=\"edit_item.php?itemid=$itemid&type=$itemtype\" method=\"post\">
-        <input type = \"submit\" name = \"edit\" value = \"Edit Item\">
-    </form></div> ");
-    echo("<div style=\"float:right;display:inline-block;\"><form action=\"view_item.php?itemid=$itemid&type=$itemtype\" method=\"post\">
-        <input type = \"submit\" name = \"delete\" value = \"Delete Item\">
-    </form></div> ");
-?>
-</br>
-
-<form action="dashboard.php">
-    <input type = "submit" name = "Dashboard" value = "Return to Dashboard">
-</form>
-<form action="view_item.php" method="post">
-    <input type = "submit" name = "Logout" value = "Logout">
-</form>
-</body>
-
-
-
-
+            echo '</table>'; -->
