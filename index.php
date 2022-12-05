@@ -81,26 +81,34 @@ if (isset($_POST['Submit'])) {
             $insertion_err = FALSE;
             if ($result != 1) {
                 echo("<div>username already exists, please try again</div>");
+                $insertion_err = TRUE;
             } else {
-                $query = "INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) VALUES (?'s collection', ?, 1)";
+                $query = "INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) VALUES (?, ?, 1)";
 
                 if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 'ss', $username, $username);
-                    mysqli_stmt_execute($prepared_query);
-                    mysqli_stmt_store_result($prepared_query);
+                    $col_name = $username . "'s collection";
+                    mysqli_stmt_bind_param($prepared_query, 'ss', $col_name, $username);
+                    $test = mysqli_stmt_execute($prepared_query);
+                   
                     
                     $result = mysqli_stmt_affected_rows($prepared_query);
                 }
                 if ($result == 0) {
                     echo("sup_coll_err");
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
 
-                $query = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES (?'s first collection', ?'s collection')";
-                
+                $query = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES (?, ?)";
                 if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 'ss', $username, $username);
-                    mysqli_stmt_execute($prepared_query);
+                    
+                    $sub_col_name = $username . "'s first collection";
+        
+                    $super_col_name = $username . "'s collection";
+                    echo("$super_col_name");
+                    mysqli_stmt_bind_param($prepared_query, 'ss', $sub_col_name, $super_col_name);
+                    $val = mysqli_stmt_execute($prepared_query);
                     mysqli_stmt_store_result($prepared_query);
                     
                     $result = mysqli_stmt_affected_rows($prepared_query);
@@ -109,7 +117,9 @@ if (isset($_POST['Submit'])) {
                 if ($result==0) {
                     echo("sub_coll_err");
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
 
                 $query = "INSERT INTO WISHLIST (Owner_username) VALUES (?)";
                 if($prepared_query = mysqli_prepare($connection, $query)){
@@ -122,11 +132,15 @@ if (isset($_POST['Submit'])) {
                 if ($result == 0) {
                     echo("wishlist_err");
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
 
-                $query = "INSERT INTO REPORT (Sub_collection_name, Super_collection_name) VALUES (?'s first collection', ?'s collection')";
+                $query = "INSERT INTO REPORT (Sub_collection_name, Super_collection_name) VALUES (?, ?)";
                 if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 'ss', $username, $username);
+                    $sub_col_name = $username . "'s first collection";
+                    $super_col_name = $username . "'s collection";
+                    mysqli_stmt_bind_param($prepared_query, 'ss', $sub_col_name, $super_col_name);
                     mysqli_stmt_execute($prepared_query);
                     mysqli_stmt_store_result($prepared_query);
                     
@@ -135,7 +149,9 @@ if (isset($_POST['Submit'])) {
                 if ($result==0) {
                     echo("report_err");
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
                 
             }
             if(!$insertion_err){
