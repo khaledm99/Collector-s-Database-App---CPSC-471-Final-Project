@@ -80,7 +80,6 @@ $search_set = FALSE;
 
 if(isset($_POST['Add'])){
     $newName = trim(htmlentities($_POST['collection']));
-    echo "The new collection is called: " . $newName;
     if (empty($newName)){
         echo "<div>You must enter a collection name in order to add something new</div></br>";
     }
