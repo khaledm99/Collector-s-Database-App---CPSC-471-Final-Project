@@ -46,21 +46,36 @@
         session_destroy();
         header("Location: login.php?=loggedout");
     }
+    if (isset($_GET['delete'])){
+        $to_del = strval($_GET['delete']);
+        $query = "DELETE FROM ITEM where ITEM.Wishlist_name = ? AND ITEM.Item_ID = ?";
+        if($prepared_query = mysqli_prepare($connection, $query)){
+            
+            mysqli_stmt_bind_param($prepared_query, 'ss', $username, $to_del);
+            if(mysqli_stmt_execute($prepared_query)){
+                $result = mysqli_stmt_get_result($prepared_query);
+                echo('<div>Item deleted</div>');
+                
+            } else {
+                echo("Error executing SQL");
+            }
+        }
+    }
 
-    $query = "SELECT Name FROM ITEM, TITLE  WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.Wishlist_name = ? 
-              UNION select Name FROM ITEM, CONSOLE WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.Wishlist_name = ?
-              UNION select Name FROM ITEM, CONTROLLER WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.Wishlist_name = ?
-              UNION select Name FROM ITEM, STORAGE_DEVICE WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.Wishlist_name = ?
-              UNION select Name FROM ITEM, MISC_PERIPHERAL WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.Wishlist_name = ?
-              UNION select Name FROM ITEM, SUBSCRIPTION WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.Wishlist_name = ?";
+    $query = "SELECT Name,ITEM.ITEM_ID FROM ITEM, TITLE  WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.Wishlist_name = ? 
+              UNION select Name,ITEM.ITEM_ID  FROM ITEM, CONSOLE WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.Wishlist_name = ?
+              UNION select Name,ITEM.ITEM_ID  FROM ITEM, CONTROLLER WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.Wishlist_name = ?
+              UNION select Name,ITEM.ITEM_ID  FROM ITEM, STORAGE_DEVICE WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.Wishlist_name = ?
+              UNION select Name,ITEM.ITEM_ID  FROM ITEM, MISC_PERIPHERAL WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.Wishlist_name = ?
+              UNION select Name,ITEM.ITEM_ID  FROM ITEM, SUBSCRIPTION WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.Wishlist_name = ?";
     if($prepared_query = mysqli_prepare($connection, $query)){
         mysqli_stmt_bind_param($prepared_query, 'ssssss', $username, $username, $username, $username, $username, $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
             echo('<div>');
             while ($o = mysqli_fetch_object($result)) {
-                printf("%s ", $o->Name);
-                echo ('</br>');
+                // printf("%s ", $o->Name);
+                echo (strval($o->Name)."<form action=\"wishlist.php?delete=".strval($o->ITEM_ID)."\" method=\"post\"><input type = \"submit\" name = \"delete\" value = \"Delete\"></form></br>");
             }
             echo('</div>');
 

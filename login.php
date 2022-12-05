@@ -36,7 +36,7 @@
                 header("Location: admin_dashboard.php");
             } 
             else {
-                echo("Error Logging In");
+                echo("<div>Error Logging In</div>");
             }    
         }
     }

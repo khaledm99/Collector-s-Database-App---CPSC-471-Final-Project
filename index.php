@@ -89,12 +89,15 @@ if (isset($_POST['Submit'])) {
                     $col_name = $username.'s collection';
                     mysqli_stmt_bind_param($psupinsert, 'ss', $col_name, $username);
                     $result = mysqli_stmt_execute($psupinsert);
+
                 }
                 if (!$result) {
                     echo("sup_coll_err");
                     //echo mysqli_error($psupinsert);
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
 
                 $subinsert = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES (?, ?)";
                 
@@ -103,13 +106,16 @@ if (isset($_POST['Submit'])) {
                     $sup_col_name = $username.'s collection';
                     mysqli_stmt_bind_param($psubinsert, 'ss', $sub_col_name, $sup_col_name);
                     $result = mysqli_stmt_execute($psubinsert);
+
                 }
                 
                 if (!$result) {
                     echo("sub_coll_err");
                     //echo mysqli_error($psubinsert);
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
 
                 $wishinsert = "INSERT INTO WISHLIST (Owner_username) VALUES (?)";
                 if($pwishinsert = mysqli_prepare($connection, $wishinsert)){
@@ -120,7 +126,9 @@ if (isset($_POST['Submit'])) {
                     echo("wishlist_err");
                     //echo mysqli_error($pwishinsert);
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
 
                 $reportinsert = "INSERT INTO REPORT (Sub_collection_name, Super_collection_name) VALUES (?, ?)";
                 if($preportinsert = mysqli_prepare($connection, $reportinsert)){
@@ -128,12 +136,15 @@ if (isset($_POST['Submit'])) {
                     $sup_col_name = $username.'s collection';
                     mysqli_stmt_bind_param($preportinsert, 'ss', $sub_col_name, $sup_col_name);
                     $result = mysqli_stmt_execute($preportinsert);
+
                 }
                 if (!$result) {
                     echo("report_err");
                     //echo mysqli_error($preportinsert);
                     $insertion_err = TRUE;
-                } 
+                } else {
+                    echo("$result");
+                }
                 
             }
             if(!$insertion_err){
