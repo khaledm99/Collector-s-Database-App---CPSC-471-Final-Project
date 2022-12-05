@@ -37,10 +37,12 @@
 
 </style>
 <?php
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     $connection = mysqli_connect("localhost","root","password","main");
     if(!$connection) {
         exit("there was an error".mysqli_connect_errno());
     } 
+
 ?>
     
 <h1> Welcome, enter a Username and Email to register! </h1>
@@ -51,7 +53,7 @@
     <input type="text" id="uname" name="username"></br>
     <label for ="email">Enter E-mail</label>
     <input type="text" id="email" name="email"></br></br>
-    <input type = "submit" name = "Submit">
+    <input type = "submit" value="Register" name = "Submit">
 </form>
 <?php
 if (isset($_POST['Submit'])) {
@@ -69,71 +71,67 @@ if (isset($_POST['Submit'])) {
         }
 
         if(!$input_err){
-            $query = "INSERT INTO CLIENT (Username, Date_Joined, Email) VALUES (?, curdate(), ?)";
-            if($prepared_query = mysqli_prepare($connection, $query)){
-                mysqli_stmt_bind_param($prepared_query, 'ss', $username, $email);
-                mysqli_stmt_execute($prepared_query);
-                mysqli_stmt_store_result($prepared_query);
-                
-                $result = mysqli_stmt_affected_rows($prepared_query);
+            $insert = "INSERT INTO CLIENT (Username, Date_Joined, Email) VALUES (?, curdate(), ?)";
+            if($pinsert = mysqli_prepare($connection, $insert)){
+                mysqli_stmt_bind_param($pinsert, 'ss', $username, $email);
+                $insert_status = mysqli_stmt_execute($pinsert);                
             }
             // $result = mysqli_query($connection, $query);
             $insertion_err = FALSE;
-            if ($result != 1) {
+            if (!$insert_status) {
                 echo("<div>username already exists, please try again</div>");
+                //echo mysqli_error($pinsert);
+                $insertion_err = TRUE;
             } else {
-                $query = "INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) VALUES (?'s collection', ?, 1)";
+                $supinsert = "INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) VALUES (?, ?, 1)";
 
-                if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 'ss', $username, $username);
-                    mysqli_stmt_execute($prepared_query);
-                    mysqli_stmt_store_result($prepared_query);
-                    
-                    $result = mysqli_stmt_affected_rows($prepared_query);
+                if($psupinsert = mysqli_prepare($connection, $supinsert)){
+                    $col_name = $username.'s collection';
+                    mysqli_stmt_bind_param($psupinsert, 'ss', $col_name, $username);
+                    $result = mysqli_stmt_execute($psupinsert);
                 }
-                if ($result == 0) {
+                if (!$result) {
                     echo("sup_coll_err");
+                    //echo mysqli_error($psupinsert);
                     $insertion_err = TRUE;
                 } 
 
-                $query = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES (?'s first collection', ?'s collection')";
+                $subinsert = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES (?, ?)";
                 
-                if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 'ss', $username, $username);
-                    mysqli_stmt_execute($prepared_query);
-                    mysqli_stmt_store_result($prepared_query);
-                    
-                    $result = mysqli_stmt_affected_rows($prepared_query);
+                if($psubinsert = mysqli_prepare($connection, $subinsert)){
+                    $sub_col_name = $username.'s first collection';
+                    $sup_col_name = $username.'s collection';
+                    mysqli_stmt_bind_param($psubinsert, 'ss', $sub_col_name, $sup_col_name);
+                    $result = mysqli_stmt_execute($psubinsert);
                 }
                 
-                if ($result==0) {
+                if (!$result) {
                     echo("sub_coll_err");
+                    //echo mysqli_error($psubinsert);
                     $insertion_err = TRUE;
                 } 
 
-                $query = "INSERT INTO WISHLIST (Owner_username) VALUES (?)";
-                if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 's', $username);
-                    mysqli_stmt_execute($prepared_query);
-                    mysqli_stmt_store_result($prepared_query);
-                    
-                    $result = mysqli_stmt_affected_rows($prepared_query);
+                $wishinsert = "INSERT INTO WISHLIST (Owner_username) VALUES (?)";
+                if($pwishinsert = mysqli_prepare($connection, $wishinsert)){
+                    mysqli_stmt_bind_param($pwishinsert, 's', $username);
+                    $result = mysqli_stmt_execute($pwishinsert);
                 }
-                if ($result == 0) {
+                if (!$result) {
                     echo("wishlist_err");
+                    //echo mysqli_error($pwishinsert);
                     $insertion_err = TRUE;
                 } 
 
-                $query = "INSERT INTO REPORT (Sub_collection_name, Super_collection_name) VALUES (?'s first collection', ?'s collection')";
-                if($prepared_query = mysqli_prepare($connection, $query)){
-                    mysqli_stmt_bind_param($prepared_query, 'ss', $username, $username);
-                    mysqli_stmt_execute($prepared_query);
-                    mysqli_stmt_store_result($prepared_query);
-                    
-                    $result = mysqli_stmt_affected_rows($prepared_query);
+                $reportinsert = "INSERT INTO REPORT (Sub_collection_name, Super_collection_name) VALUES (?, ?)";
+                if($preportinsert = mysqli_prepare($connection, $reportinsert)){
+                    $sub_col_name = $username.'s first collection';
+                    $sup_col_name = $username.'s collection';
+                    mysqli_stmt_bind_param($preportinsert, 'ss', $sub_col_name, $sup_col_name);
+                    $result = mysqli_stmt_execute($preportinsert);
                 }
-                if ($result==0) {
+                if (!$result) {
                     echo("report_err");
+                    //echo mysqli_error($preportinsert);
                     $insertion_err = TRUE;
                 } 
                 

@@ -86,15 +86,10 @@ if(isset($_POST['Add'])){
     }
     else{
         $insert = "INSERT INTO SUB_COLLECTION (Name, Super_collection_name) VALUES (?, ?)";
-        echo $insert;
         if($prepared_query = mysqli_prepare($connection, $insert)){
             $subName = $username.'s collection';
-            echo "In the prepared statement " . $subName . "</br>";
-            $ok = mysqli_stmt_bind_param($prepared_query, 'ss', $newName, $subName);
-            echo "Bind worked? ".$ok."</br>";
-            $ok  = mysqli_stmt_execute($prepared_query);
-            echo "Execute worked? ".$ok."</br>";
-            echo mysqli_stmt_error($prepared_query);
+            mysqli_stmt_bind_param($prepared_query, 'ss', $newName, $subName);
+            mysqli_stmt_execute($prepared_query);
         }
         else{
             die ("Statement error: ".mysqli_stmt_error($prepared_query));
@@ -157,10 +152,10 @@ if ( $result > 0 ) {
             echo "<div>Your search for '".$search."' didn't find anything</div></br>";
         }
         else {
-            echo "You don't have any collections.  Try adding one...</br>";
+            echo "<div>You don't have any collections</div></br>";
         }
     }
-    echo print_r($_POST, TRUE);
+    //echo print_r($_POST, TRUE);
 ?>
 
 <form action="collections.php" method="post">
