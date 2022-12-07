@@ -53,7 +53,6 @@
 
     $query = "SELECT * FROM CLIENT";
     if($prepared_query = mysqli_prepare($connection, $query)){
-        mysqli_stmt_bind_param($prepared_query, 's', $username);
         if(mysqli_stmt_execute($prepared_query)){
             $result = mysqli_stmt_get_result($prepared_query);
             echo("<div>");
