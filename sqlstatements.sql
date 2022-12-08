@@ -1,56 +1,59 @@
--- All implemented SQL Code:
+-- All implemented SQL Code
+-- all code is implemented via 
+-- parameterization in the php files
+-- for SQL injection security:
 
 -- Executed upon registration:
 -- Adds a client with a new super-colleciton,
 -- one sub-collection,
 -- one wishlist, and one collection report entity.
 INSERT INTO CLIENT (Username, Date_Joined, Email) 
-    VALUES (?, curdate(), ?);
+    VALUES (@Username, curdate(), @Email);
 INSERT INTO SUPER_COLLECTION (Name, Owner_username, no_of_subcollections) 
-    VALUES (?, ?, 1);
+    VALUES (@Username, @Username, 1);
 INSERT INTO SUB_COLLECTION (Name, Super_collection_name) 
-    VALUES (?, ?);
+    VALUES (@sub_col_name, @super_col_name);
 INSERT INTO WISHLIST (Owner_username) 
-    VALUES (?);
+    VALUES (@Username);
 INSERT INTO REPORT (Sub_collection_name, Super_collection_name) 
-    VALUES (?, ?);
+    VALUES (@sub_col_name, @super_col_name);
 
 -- executed upon login:
-SELECT Username FROM CLIENT WHERE CLIENT.Username = ?;  -- First checks login against Client table, 
-SELECT Username FROM ADMIN WHERE ADMIN.Username = ?;    -- if no user is found, checks against Admin table, otherwise shows error
+SELECT Username FROM CLIENT WHERE CLIENT.Username = @Username;  -- First checks login against Client table, 
+SELECT Username FROM ADMIN WHERE ADMIN.Username = @Username;    -- if no user is found, checks against Admin table, otherwise shows error
 
 -- admin dashboard button for generating system report:
 INSERT INTO SYSTEM_REPORT (Timestamp) 
-    VALUES (?);
+    VALUES (@Timestamp);
 INSERT INTO GENERATES_SYS_REPORT (Admin_username, Report_timestamp, Super_collection_name) 
-    VALUES (?, ?, 'khaledm99''s collection');
+    VALUES (@Username, @Timestamp, @super_col_name);
 
 -- Queries for sub-collections:
 -- Selects this user's sub-collections:
 SELECT SUB_COLLECTION.Name FROM SUB_COLLECTION, SUPER_COLLECTION            
-    WHERE SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND Owner_username = ?;  
+    WHERE SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND Owner_username = @Username;  
 -- Selects this user's sub-collections using a search term:
 SELECT SUB_COLLECTION.Name FROM SUB_COLLECTION, SUPER_COLLECTION
     WHERE SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name 
-    AND Owner_username = ? AND SUB_COLLECTION.Name like ?;   
+    AND Owner_username = @Username AND SUB_COLLECTION.Name like @Search_term;   
 INSERT INTO SUB_COLLECTION (Name, Super_collection_name) -- Adds a new sub-collection
-    VALUES (?, ?);
+    VALUES (@sub_col_name, @super_col_name);
 
 -- Query for viewing this user's wishlist:
-SELECT Name,ITEM.ITEM_ID FROM ITEM, TITLE  WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.Wishlist_name = ? 
-    UNION select Name,ITEM.ITEM_ID  FROM ITEM, CONSOLE WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name,ITEM.ITEM_ID  FROM ITEM, CONTROLLER WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name,ITEM.ITEM_ID  FROM ITEM, STORAGE_DEVICE WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name,ITEM.ITEM_ID  FROM ITEM, MISC_PERIPHERAL WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name,ITEM.ITEM_ID  FROM ITEM, SUBSCRIPTION WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.Wishlist_name = ?;
+SELECT Name,ITEM.ITEM_ID FROM ITEM, TITLE  WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.Wishlist_name = @Username 
+    UNION select Name,ITEM.ITEM_ID  FROM ITEM, CONSOLE WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name,ITEM.ITEM_ID  FROM ITEM, CONTROLLER WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name,ITEM.ITEM_ID  FROM ITEM, STORAGE_DEVICE WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name,ITEM.ITEM_ID  FROM ITEM, MISC_PERIPHERAL WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name,ITEM.ITEM_ID  FROM ITEM, SUBSCRIPTION WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.Wishlist_name = @Username;
 
 -- Queries for viewing/adding/editing items in a collection:
 -- Selects all items (titles and console) in this collection:
 SELECT in_col.item_id AS ID, t.name AS Name, 'title' AS Type FROM IN_COLLECTION AS in_col, TITLE AS t 
-    WHERE in_col.Collection_name = ? AND in_col.Item_ID = t.Item_ID
+    WHERE in_col.Collection_name = @sub_col_name AND in_col.Item_ID = t.Item_ID
     UNION
 SELECT in_col.item_id AS ID, c.name AS Name, 'console' as Type FROM IN_COLLECTION AS in_col, CONSOLE AS c 
-    WHERE in_col.Collection_name = ? AND in_col.Item_ID = c.Item_ID;
+    WHERE in_col.Collection_name = @sub_col_name AND in_col.Item_ID = c.Item_ID;
 
 -- php code to create a new item by incrementing the item ID 
 <?php
@@ -66,19 +69,20 @@ function addItem($conn){
 ?>
 -- Inserts the basic item into this sub-collection:
 INSERT INTO IN_COLLECTION (Item_ID, Collection_name) 
-    VALUES (?, ?)
+    VALUES (@ItemID, @sub_col_name)
 -- Specifies the new item as a title
 INSERT INTO TITLE (Name, Play_status, Release_year, Playtime, Game_type, Edition, Rating, Item_ID) 
-    VALUES (?,?,?,?,?,?,?,?)
+    VALUES (?,?,?,?,?,?,?,?) -- all values inserted via paramterization
 -- Specifies the new item as a console
 INSERT INTO CONSOLE (Name, Serial_no, Internal_storage_capacity, Type, Edition, Item_ID) 
-    VALUES (?,?,?,?,?,?)
+    VALUES (?,?,?,?,?,?) -- all values inserted via parameterization
 
 -- Delete an item
 DELETE FROM ITEM where ITEM.Item_ID = ?
 -- View an item
-SELECT * FROM {$itemtype} WHERE {$itemtype}.ITEM_ID = ?
+SELECT * FROM {@itemtype} WHERE {@itemtype}.ITEM_ID = @ItemID
 -- Edit an item (only implemented console/title)
+-- all values updated via paramterization
 UPDATE CONSOLE  SET  Name = ?, Serial_no = ?, 
     CONSOLE.Condition = ?, 
     Internal_storage_capacity = ?, Type = ?,
@@ -94,37 +98,37 @@ UPDATE TITLE  SET  Name = ?, Play_status = ?,
 SELECT TITLE.Name FROM ITEM, TITLE, IN_COLLECTION, SUB_COLLECTION, SUPER_COLLECTION 
     WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.ITEM_ID = IN_COLLECTION.ITEM_ID 
         AND IN_COLLECTION.Collection_name = SUB_COLLECTION.Name 
-        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = ? 
+        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = @Username 
     UNION select CONSOLE.Name FROM ITEM, CONSOLE, IN_COLLECTION, SUB_COLLECTION, SUPER_COLLECTION 
     WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.ITEM_ID = IN_COLLECTION.ITEM_ID 
         AND IN_COLLECTION.Collection_name = SUB_COLLECTION.Name 
-        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = ? 
+        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = @Username 
     UNION select CONTROLLER.Name FROM ITEM, CONTROLLER, IN_COLLECTION, SUB_COLLECTION, SUPER_COLLECTION 
     WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.ITEM_ID = IN_COLLECTION.ITEM_ID 
         AND IN_COLLECTION.Collection_name = SUB_COLLECTION.Name 
-        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = ? 
+        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = @Username 
     UNION select STORAGE_DEVICE.Name FROM ITEM, STORAGE_DEVICE, IN_COLLECTION, SUB_COLLECTION, SUPER_COLLECTION 
     WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.ITEM_ID = IN_COLLECTION.ITEM_ID 
         AND IN_COLLECTION.Collection_name = SUB_COLLECTION.Name 
-        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = ? 
+        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = @Username 
     UNION select MISC_PERIPHERAL.Name FROM ITEM, MISC_PERIPHERAL, IN_COLLECTION, SUB_COLLECTION, SUPER_COLLECTION 
     WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.ITEM_ID = IN_COLLECTION.ITEM_ID 
         AND IN_COLLECTION.Collection_name = SUB_COLLECTION.Name 
-        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = ? 
+        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = @Username 
     UNION select SUBSCRIPTION.Name FROM ITEM, SUBSCRIPTION, IN_COLLECTION, SUB_COLLECTION, SUPER_COLLECTION 
     WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.ITEM_ID = IN_COLLECTION.ITEM_ID 
         AND IN_COLLECTION.Collection_name = SUB_COLLECTION.Name 
-        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = ?;
+        AND SUB_COLLECTION.Super_collection_name = SUPER_COLLECTION.Name AND SUPER_COLLECTION.Owner_username = @Username;
 -- Selects all items in this user's wishlist (to be counted for report):
-SELECT Name FROM ITEM, TITLE  WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.Wishlist_name = ? 
-    UNION select Name FROM ITEM, CONSOLE WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name FROM ITEM, CONTROLLER WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name FROM ITEM, STORAGE_DEVICE WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name FROM ITEM, MISC_PERIPHERAL WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.Wishlist_name = ?
-    UNION select Name FROM ITEM, SUBSCRIPTION WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.Wishlist_name = ?
+SELECT Name FROM ITEM, TITLE  WHERE TITLE.ITEM_ID = ITEM.ITEM_ID AND ITEM.Wishlist_name = @Username 
+    UNION select Name FROM ITEM, CONSOLE WHERE ITEM.ITEM_ID = CONSOLE.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name FROM ITEM, CONTROLLER WHERE ITEM.ITEM_ID = CONTROLLER.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name FROM ITEM, STORAGE_DEVICE WHERE ITEM.ITEM_ID = STORAGE_DEVICE.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name FROM ITEM, MISC_PERIPHERAL WHERE ITEM.ITEM_ID = MISC_PERIPHERAL.ITEM_ID AND ITEM.Wishlist_name = @Username
+    UNION select Name FROM ITEM, SUBSCRIPTION WHERE ITEM.ITEM_ID = SUBSCRIPTION.ITEM_ID AND ITEM.Wishlist_name = @Username
 -- Selects all sub-collections in this super-collection (to be counted for report):
 SELECT Sub_collection.Name from Sub_collection, Super_collection 
-    WHERE Sub_collection.Super_collection_name = Super_collection.Name and Super_collection.Owner_username = ?;
+    WHERE Sub_collection.Super_collection_name = Super_collection.Name and Super_collection.Owner_username = @Username;
 
 -- Statement to view all system reports generated by admins:
 SELECT SYSTEM_REPORT.Timestamp,GENERATES_SYS_REPORT.Admin_username FROM SYSTEM_REPORT,GENERATES_SYS_REPORT WHERE 
