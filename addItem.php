@@ -70,12 +70,11 @@
     if(!$conn) {
         exit("there was an error".mysqli_connect_errno());
     } 
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     $username = $_SESSION['username'];
     $collection = $_POST['collectionID'];
     $type = $_POST['type'];
 
-    if($type == "Title"){
+    if($type == "title"){
         $sql = "SELECT Name, Item_ID FROM TITLE";
     }
     else{
@@ -110,7 +109,7 @@
             }
             echo "</table></div>";
             echo "<div>Or add a new one:</div> </br>";
-            if($type == "Title"){
+            if($type == "title"){
                 ?>
                 <table>
                 <form action="viewCollection.php" method="post">
